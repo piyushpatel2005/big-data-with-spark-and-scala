@@ -13,8 +13,8 @@ object WikipediaData {
   private[wikipedia] def parse(line: String): WikipediaArticle = {
     val subs = "</title><text>"
     val i = line.indexOf(subs)
-    val title = line.substring(14, i)
-    val text  = line.substring(i + subs.length, line.length-16)
+    val title = line.substring(14, i) // there are 14 characters before title starts in the file
+    val text  = line.substring(i + subs.length, line.length-16) // there are 16 characters after the end of text
     WikipediaArticle(title, text)
   }
 }

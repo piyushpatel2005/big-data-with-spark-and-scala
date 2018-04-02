@@ -3,5 +3,8 @@ wikipedia.zip
 example.zip
 **/.idea
 **/target
-/wikipedia/src/main/resources/wikipedia/wikipediaa.dat
+/wikipedia/src/main/resources/wikipedia/wikipedia.dat
 slides
+*.zip
+*.dat
+**/metastore_db/
