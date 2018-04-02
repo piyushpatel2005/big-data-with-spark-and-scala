@@ -8,3 +8,5 @@ slides
 *.zip
 *.dat
 **/metastore_db/
+stackoverflow/src/main/resources/stackoverflow/stackoverflow.csv
+*.csv
