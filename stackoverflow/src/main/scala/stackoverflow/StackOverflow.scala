@@ -110,7 +110,10 @@ class StackOverflow extends Serializable {
       highScore
     }
 
-    ???
+    grouped
+      .flatMap(item => item._2)
+      .groupByKey()
+      .mapValues(answers => answerHighScore(answers.toArray))
   }
 
 
@@ -130,7 +133,10 @@ class StackOverflow extends Serializable {
       }
     }
 
-    ???
+    scored.map(col1 => (firstLangInTag(col1._1.tags, langs), col1._2))
+        .filter(_._1.isDefined)
+        .map(col1 => (col1._1.get * langSpread, col1._2))
+        .persist()
   }
 
 
@@ -188,6 +194,12 @@ class StackOverflow extends Serializable {
     val newMeans = means.clone() // you need to compute newMeans
 
     // TODO: Fill in the newMeans array
+    vectors.map(vec => (findClosest(vec, means), vec))
+      .groupByKey()
+      .mapValues(averageVectors)
+      .collect
+      .foreach(col => newMeans.update(col._1, col._2))
+
     val distance = euclideanDistance(means, newMeans)
 
     if (debug) {
@@ -288,10 +300,18 @@ class StackOverflow extends Serializable {
     val closestGrouped = closest.groupByKey()
 
     val median = closestGrouped.mapValues { vs =>
-      val langLabel: String   = ??? // most common language in the cluster
-      val langPercent: Double = ??? // percent of the questions in the most common language
-      val clusterSize: Int    = ???
-      val medianScore: Int    = ???
+      val language = vs.groupBy(_._1).mapValues(_.size).maxBy(_._2)
+      val langLabel: String   = langs(language._1 / langSpread) // most common language in the cluster
+      val langPercent: Double = language._2 * 100 / vs.size // percent of the questions in the most common language
+      val clusterSize: Int    = vs.size
+
+      def calculateMedian(arr: Iterable[(Int, Int)]) = {
+        val a = arr.map(x => x._2).toArray
+        val length = a.length
+        val (lower, upper) = a.sortWith(_ < _).splitAt(length / 2)
+        if(length % 2 == 0) (lower.last + upper.head) / 2 else upper.head
+      }
+      val medianScore: Int    = calculateMedian(vs)
 
       (langLabel, langPercent, clusterSize, medianScore)
     }
