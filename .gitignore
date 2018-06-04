@@ -1,6 +1,7 @@
 wikipedia.dat
 wikipedia.zip
 example.zip
+timeusage.zip
 **/.idea
 **/target
 /wikipedia/src/main/resources/wikipedia/wikipedia.dat
@@ -10,3 +11,4 @@ slides
 **/metastore_db/
 stackoverflow/src/main/resources/stackoverflow/stackoverflow.csv
 *.csv
+timeusage/src/main/resources/timeusage/atumssum.csv
